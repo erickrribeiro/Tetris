@@ -9,6 +9,7 @@ int main() {
     t.loadFromFile("../images/tiles.png");
 
     sf::Sprite s(t);
+    s.setTextureRect(sf::IntRect(0,0,18,18));
 
 
     while (window.isOpen()){
