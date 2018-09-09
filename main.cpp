@@ -28,6 +28,11 @@ int main() {
     sf::Sprite s(t);
     s.setTextureRect(sf::IntRect(0,0,18,18));
 
+    int dx = 0;
+    bool rotate = false;
+    int colorNum = 1;
+
+
 
     while (window.isOpen()){
         sf::Event e;
@@ -35,13 +40,46 @@ int main() {
             if(e.type == sf::Event::Closed){
                 window.close();
             }
+
+            if(e.type == sf::Event::KeyPressed){
+                if(e.key.code == sf::Keyboard::Up){
+                    rotate = true;
+                }else if(e.key.code == sf::Keyboard::Left){
+                    dx -= 1;
+                }else if(e.key.code == sf::Keyboard::Right){
+                    dx += 1;
+                }
+            }
         }
 
-        int n = 2;
-        for (int i=0;i < 4; i++){
-            a[i].x = figures[n][i] % 2;
-            a[i].y = figures[n][i] / 2;
+        /// <- Move ->
+        for(int i=0; i < 4; i++){
+            a[i].x += dx;
         }
+
+        //Rotate
+        if(rotate){
+            Point p = a[1]; // center rotation
+            for(int i=0; i < 4; i++){
+                int x = a[i].y - p.y;
+                int y = a[i].x - p.x;
+
+                a[i].x = p.x - x;
+                a[i].y = p.y + y;
+            }
+        }
+
+        int n = 3;
+        if(a[0].x == 0) {
+            for (int i = 0; i < 4; i++) {
+                a[i].x = figures[n][i] % 2;
+                a[i].y = figures[n][i] / 2;
+            }
+        }
+
+        dx = 0;
+        rotate = 0;
+
 
         window.clear(sf::Color::White);
 
