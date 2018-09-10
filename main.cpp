@@ -172,6 +172,7 @@ int main() {
                 if (field[i][j] == 0) continue;
                 s.setTextureRect(sf::IntRect(field[i][j]*18, 0, 18, 18));
                 s.setPosition(j * 18, i * 18);
+                s.move(28,31);
                 window.draw(s);
             }
         }
@@ -180,6 +181,7 @@ int main() {
         for (int i = 0; i < 4; i++) {
             s.setTextureRect(sf::IntRect(colorNum*18, 0, 18, 18));
             s.setPosition(a[i].x * 18, a[i].y * 18);
+            s.move(28,31);
             window.draw(s);
 
         }
