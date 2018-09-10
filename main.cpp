@@ -30,12 +30,14 @@ bool check(){
     }
     return result;
 }
+
 int main() {
     std::srand(time(0));
 
     sf::RenderWindow window(sf::VideoMode(320, 480), "The Game!");
 
     sf::Texture t;
+
     t.loadFromFile("../images/tiles.png");
 
     sf::Sprite s(t);
@@ -132,6 +134,24 @@ int main() {
             lastTimer = iTimer;
             timer += 0;
         }
+
+        ////// check lines //////
+        int k=M-1;
+        for(int i=M-1; i > 0; i--){
+            int count = 0;
+            for(int j=0; j< N;j++){
+                if(field[i][j]){
+                    count += 1;
+                }
+
+                field[k][j] = field[i][j];
+            }
+
+            if(count < N){
+                k -= 1;
+            }
+        }
+
         dx = 0;dy = 0;rotate = false;
 
         ////// Draw //////
@@ -139,15 +159,19 @@ int main() {
         window.clear(sf::Color::White);
 
 
+        //Draw the all the board
         for (int i = 0; i < M; i++) {
             for (int j = 0; j < N; j++) {
                 if (field[i][j] == 0) continue;
+                s.setTextureRect(sf::IntRect(field[i][j]*18, 0, 18, 18));
                 s.setPosition(j * 18, i * 18);
                 window.draw(s);
             }
         }
 
+        //Draw the current block
         for (int i = 0; i < 4; i++) {
+            s.setTextureRect(sf::IntRect(colorNum*18, 0, 18, 18));
             s.setPosition(a[i].x * 18, a[i].y * 18);
             window.draw(s);
         }
