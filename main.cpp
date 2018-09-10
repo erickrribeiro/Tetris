@@ -36,11 +36,18 @@ int main() {
 
     sf::RenderWindow window(sf::VideoMode(320, 480), "The Game!");
 
-    sf::Texture t;
+    sf::Texture textureBlock;
+    sf::Texture textureBackground;
+    sf::Texture textureFrame;
 
-    t.loadFromFile("../images/tiles.png");
+    textureBlock.loadFromFile("../images/tiles.png");
+    textureBackground.loadFromFile("../images/background.png");
+    textureFrame.loadFromFile("../images/frame.png");
 
-    sf::Sprite s(t);
+    sf::Sprite s(textureBlock);
+    sf::Sprite background(textureBackground);
+    sf::Sprite frame(textureFrame);
+
     s.setTextureRect(sf::IntRect(0,0,18,18));
 
     int dy =0; int dx = 0; bool rotate = false; int colorNum = 1;
@@ -157,7 +164,7 @@ int main() {
         ////// Draw //////
 
         window.clear(sf::Color::White);
-
+        window.draw(background);
 
         //Draw the all the board
         for (int i = 0; i < M; i++) {
@@ -174,9 +181,10 @@ int main() {
             s.setTextureRect(sf::IntRect(colorNum*18, 0, 18, 18));
             s.setPosition(a[i].x * 18, a[i].y * 18);
             window.draw(s);
+
         }
 
-
+        window.draw(frame);
         window.display();
     }
     return 0;
