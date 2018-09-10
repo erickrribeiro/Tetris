@@ -1,6 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <time.h>
+#include <ctime>
 
 const int M = 20;
 const int N = 10;
@@ -28,13 +28,17 @@ int main() {
     sf::Sprite s(t);
     s.setTextureRect(sf::IntRect(0,0,18,18));
 
-    int dx = 0;
-    bool rotate = false;
-    int colorNum = 1;
+    int dy =0; int dx = 0; bool rotate = false; int colorNum = 1;
+    int lastTimer=0; float timer = 0; float delay = 3.0;
 
-
+    sf::Clock clock;
 
     while (window.isOpen()){
+
+        float time = clock.getElapsedTime().asSeconds();
+        clock.restart();
+        timer+= time;
+
         sf::Event e;
         while(window.pollEvent(e)){
             if(e.type == sf::Event::Closed){
@@ -48,16 +52,20 @@ int main() {
                     dx -= 1;
                 }else if(e.key.code == sf::Keyboard::Right){
                     dx += 1;
+                }else if(e.key.code == sf::Keyboard::Down){
+                    dy += 1;
                 }
             }
         }
 
-        /// <- Move ->
+
+        /// <- Move (Left, Rights or Down) ->
         for(int i=0; i < 4; i++){
             a[i].x += dx;
+            a[i].y += dy;
         }
 
-        //Rotate
+        /// Rotate
         if(rotate){
             Point p = a[1]; // center rotation
             for(int i=0; i < 4; i++){
@@ -69,6 +77,20 @@ int main() {
             }
         }
 
+        ////// Tick //////
+//        if(timer > delay){
+        int iTimer = static_cast<int>(timer);
+
+        if(lastTimer != iTimer){
+            for(int i=0; i < 4; i++) {
+                a[i].y += 1;
+            }
+//            std::cout << "tick: " << ((int)timer) << std::endl;
+            lastTimer = iTimer;
+            timer += 0;
+        }
+
+
         int n = 3;
         if(a[0].x == 0) {
             for (int i = 0; i < 4; i++) {
@@ -78,8 +100,8 @@ int main() {
         }
 
         dx = 0;
-        rotate = 0;
-
+        dy = 0;
+        rotate = false;
 
         window.clear(sf::Color::White);
 
