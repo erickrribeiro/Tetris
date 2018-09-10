@@ -1,6 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <ctime>
+#include <time.h>
 
 const int M = 20;
 const int N = 10;
@@ -19,8 +19,21 @@ int figures[7][4] = {
         2,3,4,5  //0
 };
 
+bool check(){
+    bool result = true;
+    for(int i=0;i<4;i++){
+        if(a[i].x < 0 || a[i].x >= N || a[i].y >= M) {
+            result = false;
+        }else if(field[a[i].y][a[i].x]){
+            result =false;
+        }
+    }
+    return result;
+}
 int main() {
-    sf::RenderWindow window(sf::VideoMode(320, 400), "The Game!");
+    std::srand(time(0));
+
+    sf::RenderWindow window(sf::VideoMode(320, 480), "The Game!");
 
     sf::Texture t;
     t.loadFromFile("../images/tiles.png");
@@ -29,7 +42,7 @@ int main() {
     s.setTextureRect(sf::IntRect(0,0,18,18));
 
     int dy =0; int dx = 0; bool rotate = false; int colorNum = 1;
-    int lastTimer=0; float timer = 0; float delay = 3.0;
+    int lastTimer= -1; float timer = 0;
 
     sf::Clock clock;
 
@@ -61,8 +74,16 @@ int main() {
 
         /// <- Move (Left, Rights or Down) ->
         for(int i=0; i < 4; i++){
+            b[i] = a[i];
+
             a[i].x += dx;
             a[i].y += dy;
+        }
+
+        if(!check()){
+            for(int i=0; i< 4; i++){
+                a[i] = b[i];
+            }
         }
 
         /// Rotate
@@ -75,40 +96,62 @@ int main() {
                 a[i].x = p.x - x;
                 a[i].y = p.y + y;
             }
+
+            if(!check()){
+                for(int i=0; i< 4; i++){
+                    a[i] = b[i];
+                }
+            }
         }
 
         ////// Tick //////
-//        if(timer > delay){
         int iTimer = static_cast<int>(timer);
 
-        if(lastTimer != iTimer){
+        if((lastTimer != iTimer) ||lastTimer != iTimer){
             for(int i=0; i < 4; i++) {
+                b[i] = a[i];
                 a[i].y += 1;
             }
+
+            //new block
+            if(!check()){
+                for(int i=0; i< 4; i++){
+                    field[b[i].y][b[i].x] = colorNum;
+                }
+
+                colorNum = 1 + std::rand() % 7;
+                int n = std::rand() % 7;
+
+                for (int i=0; i< 4; i++){
+                    a[i].x = figures[n][i] % 2;
+                    a[i].y = figures[n][i] / 2;
+                }
+            }
+//            std::cout << "rand: "<< std::rand() % 7 << std::endl;
 //            std::cout << "tick: " << ((int)timer) << std::endl;
             lastTimer = iTimer;
             timer += 0;
         }
+        dx = 0;dy = 0;rotate = false;
 
-
-        int n = 3;
-        if(a[0].x == 0) {
-            for (int i = 0; i < 4; i++) {
-                a[i].x = figures[n][i] % 2;
-                a[i].y = figures[n][i] / 2;
-            }
-        }
-
-        dx = 0;
-        dy = 0;
-        rotate = false;
+        ////// Draw //////
 
         window.clear(sf::Color::White);
 
-        for (int i=0; i < 4; i++ ){
+
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                if (field[i][j] == 0) continue;
+                s.setPosition(j * 18, i * 18);
+                window.draw(s);
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
             s.setPosition(a[i].x * 18, a[i].y * 18);
             window.draw(s);
         }
+
 
         window.display();
     }
